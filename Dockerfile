@@ -21,4 +21,4 @@ COPY . .
 ENV PYTHONPATH=/app
 
 # Comando por defecto: ejecutar pruebas
-CMD ["pytest"]
+CMD ["python", "pipeline_python/calculator.py"]

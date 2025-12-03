@@ -7,24 +7,33 @@ on:
     branches: [ "main" ]
 
 jobs:
-  docker-build-test-security:
+  docker-ci:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout repo
       uses: actions/checkout@v3
 
+    # Construir la imagen con tu Dockerfile
     - name: Build Docker image
-      run: docker build -t miapp:ci .
+      run: docker build -t miapp:devsecops .
 
-    - name: Run unit tests inside container
-      run: docker run --rm miapp:ci pytest
+    # Ejecutar tu aplicación (calculator.py) usando el CMD del Dockerfile
+    - name: Run application
+      run: docker run --rm miapp:devsecops
 
-    - name: Security scan (Bandit) inside container
-      run: docker run --rm miapp:ci bandit -r .
+    # Ejecutar tests dentro del mismo contenedor (sobrescribiendo el CMD)
+    - name: Run unit tests
+      run: docker run --rm miapp:devsecops pytest
 
-    - name: Dependency scan (Safety) inside container
-      run: docker run --rm miapp:ci safety check
+    # Lint dentro del contenedor
+    - name: Lint code
+      run: docker run --rm miapp:devsecops flake8 .
 
-    - name: Lint code (Flake8) inside container
-      run: docker run --rm miapp:ci flake8 .
+    # Escaneo de seguridad con Bandit
+    - name: Security scan (Bandit)
+      run: docker run --rm miapp:devsecops bandit -r .
+
+    # Escaneo de dependencias con Safety
+    - name: Dependency scan (Safety)
+      run: docker run --rm miapp:devsecops safety check
