@@ -1,4 +1,4 @@
-name: DevSecOps Pipeline
+name: DevSecOps Pipeline with Docker
 
 on:
   push:
@@ -7,34 +7,24 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build-test-security:
+  docker-build-test-security:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout repo
       uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
+    - name: Build Docker image
+      run: docker build -t miapp:ci .
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
+    - name: Run unit tests inside container
+      run: docker run --rm miapp:ci pytest
 
-    - name: Set PYTHONPATH
-      run: echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
+    - name: Security scan (Bandit) inside container
+      run: docker run --rm miapp:ci bandit -r .
 
-    - name: Run unit tests
-      run: pytest
+    - name: Dependency scan (Safety) inside container
+      run: docker run --rm miapp:ci safety check
 
-    - name: Security scan (Bandit)
-      run: bandit -r .
-
-    - name: Dependency scan (Safety)
-      run: safety check
-
-    - name: Lint code (Flake8)
-      run: flake8 .
+    - name: Lint code (Flake8) inside container
+      run: docker run --rm miapp:ci flake8 .
