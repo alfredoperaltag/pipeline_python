@@ -1,3 +1,6 @@
+import os
+
+
 def add(a, b):
     """Suma dos números"""
     return a + b
@@ -25,3 +28,11 @@ if __name__ == "__main__":
     print("5 - 2 =", subtract(5, 2))
     print("4 * 3 =", multiply(4, 3))
     print("10 / 2 =", divide(10, 2))
+
+    path = "/run/secrets/database"
+    if os.path.exists(path):
+        with open(path) as f:
+            db_secret = f.read().strip()
+        print("DB is:", path)
+    else:
+        print("No se encontró el database en", path)

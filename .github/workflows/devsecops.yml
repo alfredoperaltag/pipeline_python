@@ -14,15 +14,22 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v3
 
+    # Crear el archivo secret desde GitHub Secrets
+    - name: Create secret file
+      run: echo "${{ secrets.DB_PASSWORD }}" > database.txt
+
     # Construir la imagen con tu Dockerfile
     - name: Build Docker image
       run: docker build -t miapp:devsecops .
 
-    # Ejecutar tu aplicación (calculator.py) usando el CMD del Dockerfile
-    - name: Run application
-      run: docker run --rm miapp:devsecops
+    # Validar que el contenedor lee el secret
+    - name: Run application with secret
+      run: |
+        docker run --rm \
+        -v $(pwd)/database.txt:/run/secrets/database \
+        miapp:devsecops
 
-    # Ejecutar tests dentro del mismo contenedor (sobrescribiendo el CMD)
+    # Ejecutar tests dentro del contenedor
     - name: Run unit tests
       run: docker run --rm miapp:devsecops pytest
 
@@ -37,3 +44,12 @@ jobs:
     # Escaneo de dependencias con Safety
     - name: Dependency scan (Safety)
       run: docker run --rm miapp:devsecops safety check
+
+    # Escaneo de seguridad con Trivy
+    - name: Security scan (Trivy)
+      uses: aquasecurity/trivy-action@0.20.0
+      with:
+        image-ref: 'miapp:devsecops'
+        format: 'table'
+        severity: 'HIGH,CRITICAL'
+        exit-code: '1'
