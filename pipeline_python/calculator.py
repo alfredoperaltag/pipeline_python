@@ -20,8 +20,18 @@ def divide(a, b):
     return a / b
 
 
+import os
+
 if __name__ == "__main__":
     print("2 + 3 =", add(2, 3))
     print("5 - 2 =", subtract(5, 2))
     print("4 * 3 =", multiply(4, 3))
     print("10 / 2 =", divide(10, 2))
+
+    secret_path = "/run/secrets/db_password"
+    if os.path.exists(secret_path):
+        with open(secret_path) as f:
+            db_password = f.read().strip()
+        print("DB password is:", db_password)
+    else:
+        print("No se encontró el secret en", secret_path)
