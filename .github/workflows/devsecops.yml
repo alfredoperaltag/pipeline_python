@@ -24,7 +24,8 @@ jobs:
 
     # Validar que el contenedor lee el secret
     - name: Run application with secret
-      run: docker run --rm \
+      run: |
+        docker run --rm \
         -v $(pwd)/db_password.txt:/run/secrets/db_password \
         miapp:devsecops
 
