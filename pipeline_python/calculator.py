@@ -1,3 +1,5 @@
+import os
+
 def add(a, b):
     """Suma dos números"""
     return a + b
@@ -19,8 +21,6 @@ def divide(a, b):
         raise ValueError("No se puede dividir entre cero")
     return a / b
 
-
-import os
 
 if __name__ == "__main__":
     print("2 + 3 =", add(2, 3))
