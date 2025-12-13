@@ -16,7 +16,7 @@ jobs:
 
     # Crear el archivo secret desde GitHub Secrets
     - name: Create secret file
-      run: echo "${{ secrets.DB_PASSWORD }}" > db_password.txt
+      run: echo "${{ secrets.DB_PASSWORD }}" > db_secret.txt
 
     # Construir la imagen con tu Dockerfile
     - name: Build Docker image
@@ -26,7 +26,7 @@ jobs:
     - name: Run application with secret
       run: |
         docker run --rm \
-        -v $(pwd)/db_password.txt:/run/secrets/db_password \
+        -v $(pwd)/db_secret.txt:/run/secrets/db_secret \
         miapp:devsecops
 
     # Ejecutar tests dentro del contenedor

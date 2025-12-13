@@ -29,10 +29,10 @@ if __name__ == "__main__":
     print("4 * 3 =", multiply(4, 3))
     print("10 / 2 =", divide(10, 2))
 
-    secret_path = "/run/secrets/db_password"
+    secret_path = "/run/secrets/db_secret"
     if os.path.exists(secret_path):
         with open(secret_path) as f:
-            db_password = f.read().strip()
-        print("DB password is:", db_password)
+            db_secret = f.read().strip()
+        print("DB secret is:", db_secret)
     else:
         print("No se encontró el secret en", secret_path)
